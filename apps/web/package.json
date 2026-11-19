@@ -1,0 +1,35 @@
+{
+  "name": "@sara/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "SARA web client — Vue 3 + TypeScript SPA",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "typecheck": "vue-tsc --noEmit",
+    "gen:api": "openapi-typescript ../../apps/api/openapi.json -o src/api/schema.d.ts"
+  },
+  "dependencies": {
+    "pinia": "^3.0.0",
+    "vue": "^3.5.13",
+    "vue-i18n": "^11.1.0",
+    "vue-router": "^4.5.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/test-utils": "^2.4.6",
+    "autoprefixer": "^10.4.20",
+    "happy-dom": "^15.11.7",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.7.2",
+    "vite": "^6.0.7",
+    "vitest": "^2.1.8",
+    "vue-tsc": "^2.2.0"
+  }
+}
