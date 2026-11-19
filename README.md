@@ -11,6 +11,8 @@ and the system.
 > **Status:** the identity slice is implemented end-to-end (registration, login, refresh rotation,
 > logout, current profile). The dormitory catalog and request workflow are next. See
 > [`Task-List.md`](Task-List.md) for the authoritative status.
+>
+> **Repository:** [github.com/soroushloveronaldo-gif/projie](https://github.com/soroushloveronaldo-gif/projie)
 
 ![Login — desktop](docs/screenshots/login-desktop.png)
 
