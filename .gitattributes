@@ -1,0 +1,22 @@
+# Normalize line endings: store LF in the repository, check out per platform.
+* text=auto eol=lf
+
+# Explicitly binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+
+# Keep generated lockfiles stable in diffs
+uv.lock        text eol=lf
+pnpm-lock.yaml text eol=lf
+
+# Shell scripts must stay LF to run
+*.sh   text eol=lf
+*.ps1  text eol=crlf
+*.bat  text eol=crlf
+*.cmd  text eol=crlf

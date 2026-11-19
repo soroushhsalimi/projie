@@ -1,0 +1,69 @@
+# ---------- Operating system ----------
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ---------- Editors / IDEs ----------
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json.example
+.idea/
+*.swp
+*.swo
+*~
+
+# ---------- Environment / secrets ----------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.hypothesis/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+dist/
+build/
+*.egg-info/
+.eggs/
+site-packages/
+
+# ---------- Node / frontend ----------
+node_modules/
+.pnpm-store/
+dist/
+dist-ssr/
+.vite/
+.vitest/
+coverage/
+*.local
+*.tsbuildinfo
+playwright-report/
+test-results/
+blob-report/
+
+# ---------- Generated artifacts ----------
+openapi.json
+apps/web/src/api/schema.d.ts
+
+# ---------- Logs / runtime ----------
+*.log
+logs/
+tmp/
+.cache/
