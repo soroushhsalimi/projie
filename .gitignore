@@ -67,3 +67,19 @@ apps/web/src/api/schema.d.ts
 logs/
 tmp/
 .cache/
+
+# ---------- Local database & browser verification ----------
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+apps/api/sara.db
+apps/api/migration_check.db
+.pytest-tmp/
+.tmp/
+pytest-of-*/
+pytest-cache-files-*/
+pip-ephem-wheel-cache-*/
+.chrome-*/
+.chrome-profile*/
+.edge-*/

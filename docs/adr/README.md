@@ -51,8 +51,10 @@ Proposed ──▶ Accepted ──▶ Superseded by ADR-YYYY
 | [0002](ADR-0002-backend-modular-monolith.md) | Backend as a modular monolith with layered feature slices | Accepted | 2026-11-19 |
 | [0003](ADR-0003-frontend-vue-typescript-spa.md) | Frontend as a Vue 3 + TypeScript SPA with a generated API client | Accepted | 2026-11-19 |
 | [0004](ADR-0004-test-driven-development.md) | Test-Driven Development as the default development method | Accepted | 2026-11-19 |
-| [0005](ADR-0005-authentication-and-authorization.md) | Authentication and authorization model | Proposed | 2026-11-19 |
+| [0005](ADR-0005-authentication-and-authorization.md) | Authentication and authorization model | Accepted | 2026-11-19 |
 | [0006](ADR-0006-spec-plan-adr-workflow.md) | Spec → Plan → ADR gates for every feature | Accepted | 2026-11-19 |
+| [0012](ADR-0012-local-and-test-database.md) | SQLite for local development and tests, PostgreSQL for production | Accepted | 2026-11-19 |
+| [0013](ADR-0013-ui-primitives-and-tailwind.md) | Tailwind plus owned accessible primitives; PrimeVue deferred | Accepted | 2026-11-19 |
 
 ### Reserved IDs (not yet written)
 
@@ -66,3 +68,7 @@ must be written and `Accepted` **before** the feature that depends on it is impl
 | 0009 | Aggregation & caching strategy for dashboards and reports | F-0306, F-0401 |
 | 0010 | Notification delivery & background job infrastructure | F-0307 |
 | 0011 | Deployment topology & environment promotion | F-0405 |
+
+`0012` and `0013` were written for the first delivered slice because the environment and the UI
+foundation forced decisions earlier than planned. They are recorded in the index above; the reserved
+IDs `0007–0011` remain stable.

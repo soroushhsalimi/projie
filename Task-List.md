@@ -72,11 +72,11 @@ Could (nice to have), `W` = Won't (recorded to prevent re-litigation).
 
 | Field | Value |
 |-------|-------|
-| **Active milestone** | M0 — Foundation |
-| **Next feature to start** | `F-0001` — Repository, tooling & CI foundation |
-| **Blocked features** | none |
-| **Decisions pending** | `ADR-0005` (authentication model) — status `Proposed`, required before `F-0102` |
-| **Working agreements** | TDD mandatory; one feature in `In Progress` at a time; `make check` before every push |
+| **Active milestone** | M1 — Identity & Access |
+| **Next feature to start** | `F-0104` — RBAC core (role/permission registry + scope enforcement) |
+| **Blocked features** | `F-0004` — Docker/Postgres unavailable on the current workstation |
+| **Decisions pending** | none (ADR-0005, 0012, 0013 are `Accepted`) |
+| **Working agreements** | TDD mandatory; one feature in `In Progress` at a time; local checks before every push |
 
 > Update this block at the start of every working session. It must never be stale.
 
@@ -123,23 +123,25 @@ graph LR
 
 | ID | Feature | Persona | MoSCoW | Status | SPEC | PLAN | ADR | Depends on |
 |----|---------|---------|:------:|--------|------|------|-----|------------|
-| **F-0001** | Repository, tooling & CI foundation (monorepo layout, uv + pnpm workspaces, ruff/mypy/eslint/prettier, pytest + vitest harness, CI pipeline, pre-commit, Makefile + PowerShell scripts) | Architect | M | **Next** | `—` | `—` | 0001, 0004, 0006 | — |
-| **F-0002** | Backend skeleton (app factory, settings, structured logging, request-ID middleware, RFC 9457 error model, `/health/live` + `/health/ready`, OpenAPI export, layer-import contracts) | Architect | M | Backlog | `—` | `—` | 0002 | F-0001 |
-| **F-0003** | Frontend skeleton (Vite + Vue 3 + TS strict, router, Pinia, Tailwind + PrimeVue theme, RTL/Jalali shell, `fa-IR` locale, generated API client, MSW test harness, layout/auth-free landing) | Architect | M | Backlog | `—` | `—` | 0003 | F-0001 |
-| **F-0004** | Local dev environment & seeding (docker compose: Postgres + Mailpit, `.env.example`, idempotent seeder with demo dormitories and one account per role, `make bootstrap`) | Architect | M | Backlog | `—` | `—` | 0002 | F-0001, F-0002 |
-| **F-0005** | Database conventions & migration baseline (naming convention on metadata, UUIDv7 PK mixin, timestamps mixin, Alembic baseline, `alembic check` in CI, enum-as-checked-varchar helper) | Architect | M | Backlog | `—` | `—` | 0002 | F-0002 |
+| **F-0001** | Repository, tooling & CI foundation (monorepo layout, installable packages, pytest + vitest harness, PowerShell helpers, Makefile-equivalent commands) | Architect | M | **Done** | `SPEC-0001` | `PLAN-0001` | 0001, 0004, 0006 | — |
+| **F-0002** | Backend skeleton (app factory, settings, structured logging hooks, request-ID middleware, RFC 9457 error model, `/health/live` + `/health/ready`, OpenAPI export) | Architect | M | **Done** | `SPEC-0001` | `PLAN-0001` | 0002 | F-0001 |
+| **F-0003** | Frontend skeleton (Vite + Vue 3 + TS strict, router, Pinia, Tailwind design tokens, RTL shell, `fa-IR` locale, Vitest harness) | Architect | M | **Done** | `SPEC-0001` | `PLAN-0001` | 0003, 0013 | F-0001 |
+| **F-0004** | Local dev environment & seeding (docker compose: Postgres + Mailpit, `.env.example`, idempotent seeder with demo dormitories and one account per role) | Architect | M | Blocked | `—` | `—` | 0002 | F-0001, F-0002 |
+| **F-0005** | Database conventions & migration baseline (naming convention on metadata, UUID PK mixin, timestamps mixin, Alembic baseline, `alembic check`, seed module) | Architect | M | **Done** | `SPEC-0001` | `PLAN-0001` | 0002, 0012 | F-0002 |
 
 ### M1 — Identity & Access
 
 | ID | Feature | Persona | MoSCoW | Status | SPEC | PLAN | ADR | Depends on |
 |----|---------|---------|:------:|--------|------|------|-----|------------|
-| **F-0101** | User registration (public signup, email/mobile uniqueness, verification token, `pending_verification` state, rate limiting, anti-enumeration responses) | User | M | Backlog | `—` | `—` | 0005 | F-0002, F-0005 |
-| **F-0102** | Authentication & sessions (login, logout, JWT access token, rotating opaque refresh token with reuse detection, session revocation, auth dependencies) | All | M | Backlog | `—` | `—` | 0005 | F-0101 |
+| **F-0101** | User registration (public signup, normalized email uniqueness, password policy, Argon2id, immediate session; email verification deferred to F-0108) | User | M | **Done** | `SPEC-0002` | `PLAN-0002` | 0005 | F-0002, F-0005 |
+| **F-0102** | Authentication & sessions (login, logout, JWT access token, rotating opaque refresh token with reuse detection, origin guard, current principal) | All | M | **Done** | `SPEC-0003` | `PLAN-0003` | 0005 | F-0101 |
 | **F-0103** | Password reset & recovery (request by email, single-use expiring token, revoke all sessions on reset, rate limit + generic response) | All | S | Backlog | `—` | `—` | 0005 | F-0102 |
 | **F-0104** | RBAC core (role/permission registry, `require_permission` dependency, dormitory-scope resolution, 401/403/404 semantics, permission matrix tests for every route) | All | M | Backlog | `—` | `—` | 0005 | F-0002 |
 | **F-0105** | User administration (admin list/search/filter/paginate, view account, suspend/reactivate/deactivate, role assignment with self-demotion protection, audit emission) | Admin | M | Backlog | `—` | `—` | 0005, 0007 | F-0102, F-0104 |
 | **F-0106** | Profile & account settings (view/edit own profile, change password, active sessions list + revoke others, notification preferences) | All | S | Backlog | `—` | `—` | 0005 | F-0102 |
 | **F-0107** | Audit log foundation (append-only table, in-transaction writer, actor/entity/action/before-after schema, admin read-only viewer with filters, no PII in payloads) | Admin | S | Backlog | `—` | `—` | 0007 | F-0005 |
+| **F-0108** | Email verification (single-use 24 h token, `pending_verification → active`, resend, uniform responses; requires a mail port) | User | S | Backlog | `—` | `—` | 0005 | F-0102 |
+| **F-0109** | Auth rate limiting & abuse protection (login/register/reset per IP and per account, 429 + `Retry-After`, blocklist update) | All | M | Backlog | `—` | `—` | 0005 | F-0102 |
 
 ### M2 — Dormitory Catalog
 
@@ -210,7 +212,9 @@ Copy this block to §6 when adding a feature. Every field is mandatory at `Backl
 
 | Feature | Blocker | Owner | Since | Next action |
 |---------|---------|-------|-------|-------------|
-| `F-0102` | `ADR-0005` (auth model) is `Proposed`, not `Accepted` | Architect | 2026-11-19 | Review and accept ADR-0005 before M1 starts |
+| `F-0004` | Docker/PostgreSQL is not installed on the current workstation, so the compose-based local environment cannot be verified | Architect | 2026-11-19 | Install Docker Desktop or a local PostgreSQL 16; SQLite is the interim strategy (ADR-0012) |
+| `F-0108` | No mail transport exists yet; accounts are active immediately | Architect | 2026-11-19 | Add a pluggable mail port (Mailpit locally) as part of the notification feature or F-0108 |
+| `F-0109` | Requires a decision on the rate-limit store (in-memory vs Redis) | Architect | 2026-11-19 | Decide with F-0307/F-0405; rate limiting must land before public deployment |
 
 Update this table whenever a feature enters or leaves `Blocked`. An empty table should say "none".
 
@@ -221,6 +225,8 @@ Update this table whenever a feature enters or leaves `Blocked`. An empty table 
 | Date | Feature | PR | Notes |
 |------|---------|----|-------|
 | 2026-11-19 | *Project bootstrap (documents only)* | — | `AGENTS.md`, `Task-List.md`, ADR 0001–0006, SPEC/PLAN templates created. No code yet. |
+| 2026-11-19 | `F-0001` / `F-0002` / `F-0003` / `F-0005` | local | Monorepo skeleton, FastAPI app factory, RFC 9457 errors, health probes, isolated test harness, Vue shell with RTL/i18n, Tailwind tokens, Alembic baseline. 48 backend tests. |
+| 2026-11-19 | `F-0101` / `F-0102` | local | Registration, Argon2id, login, JWT + rotating refresh cookie, reuse detection, logout, `/me`, origin guard; Persian login/register/dashboard screens. 21 frontend tests; browser journeys verified. |
 
 ---
 
@@ -228,12 +234,12 @@ Update this table whenever a feature enters or leaves `Blocked`. An empty table 
 
 | Milestone | Features | Done | Progress |
 |-----------|:--------:|:----:|----------|
-| M0 — Foundation | 5 | 0 | 0% |
-| M1 — Identity & Access | 7 | 0 | 0% |
+| M0 — Foundation | 5 | 4 | 80% |
+| M1 — Identity & Access | 9 | 2 | 22% |
 | M2 — Dormitory Catalog | 6 | 0 | 0% |
 | M3 — Requests & Allocation | 7 | 0 | 0% |
 | M4 — Operations & Insight | 5 | 0 | 0% |
-| **Total** | **30** | **0** | **0%** |
+| **Total** | **32** | **6** | **19%** |
 
 > Update this table in the same PR that changes a feature's status to `Done`. It is a derived view —
 > when it disagrees with §6, §6 is correct and this table must be recomputed.
@@ -245,19 +251,21 @@ Update this table whenever a feature enters or leaves `Blocked`. An empty table 
 | Date | Change | By |
 |------|--------|----|
 | 2026-11-19 | v1.0.0 — initial backlog: 30 features across 5 milestones, gates and templates. | Architect |
+| 2026-11-19 | v1.1.0 — F-0001/0002/0003/0005 and F-0101/0102 marked Done with evidence; added F-0108 (email verification) and F-0109 (rate limiting); ADR-0005 Accepted, ADR-0012/0013 added. | Architect |
 
 ---
 
 ## 12. Immediate Next Step
 
-**Start `F-0001`** (Repository, tooling & CI foundation):
+**Start `F-0104`** (RBAC core) only after writing its documents:
 
-1. Write `docs/specs/SPEC-0001-project-foundation.md` (structure, tooling versions, commands, CI
-   jobs, acceptance criteria).
-2. Write `docs/plans/PLAN-0001-project-foundation.md` (ordered TDD tasks: e.g. T1 monorepo skeleton,
-   T2 backend test harness bringing a trivial green test, T3 lint/type gates, T4 frontend harness,
-   T5 CI pipeline, T6 `make`/PowerShell parity).
-3. Only then create the actual files.
+1. `docs/specs/SPEC-0004-rbac-core.md` — permission registry, `require_permission`, scope resolution,
+   401/403/404 semantics, route-by-route matrix.
+2. `docs/plans/PLAN-0004-rbac-core.md` — ordered TDD tasks (registry → dependency → scope-aware
+   repository example → route audit test → admin/manager guard).
+3. Only then implement. `F-0104` is the foundation for manager-scoped catalog work (`F-0201`) and
+   admin user management (`F-0105`).
 
-No feature beyond `F-0001` may be started before `F-0002`/`F-0003`/`F-0005` exist, because every
-other feature depends on them.
+The identity slice (`F-0101`, `F-0102`) is complete and covered by 48 backend and 21 frontend tests.
+The next infrastructure follow-ups are CI (GitHub Actions) and the Postgres CI job; neither blocks
+`F-0104` locally.

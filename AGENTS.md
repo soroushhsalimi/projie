@@ -960,8 +960,10 @@ a breaking change requiring an ADR and a migration plan.
 | [0002](docs/adr/ADR-0002-backend-modular-monolith.md) | Backend as a modular monolith with layered slices | Accepted |
 | [0003](docs/adr/ADR-0003-frontend-vue-typescript-spa.md) | Frontend as a Vue 3 + TypeScript SPA with generated API client | Accepted |
 | [0004](docs/adr/ADR-0004-test-driven-development.md) | Test-Driven Development as the default method | Accepted |
-| [0005](docs/adr/ADR-0005-authentication-and-authorization.md) | Authentication and authorization model | Proposed |
+| [0005](docs/adr/ADR-0005-authentication-and-authorization.md) | Authentication and authorization model | Accepted |
 | [0006](docs/adr/ADR-0006-spec-plan-adr-workflow.md) | Spec → Plan → ADR gates for every feature | Accepted |
+| [0012](docs/adr/ADR-0012-local-and-test-database.md) | SQLite for local development and tests, PostgreSQL for production | Accepted |
+| [0013](docs/adr/ADR-0013-ui-primitives-and-tailwind.md) | Tailwind plus owned accessible primitives; PrimeVue deferred | Accepted |
 
 **Reserved, not yet written** (pre-allocated so `Task-List.md` references stay stable; each must reach
 `Accepted` before its dependent feature is implemented): `0007` audit logging & system settings,

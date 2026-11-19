@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Status** | Proposed |
+| **Status** | Accepted |
 | **Date** | 2026-11-19 |
 | **Deciders** | Software Architect |
 | **Consulted** | Project owner |
@@ -112,9 +112,10 @@ permission.
 
 ### Follow-up actions
 
-- [ ] Review and mark `Accepted` before F-0102 starts.
-- [ ] F-0102: implement rotation + reuse detection with tests for the replay scenario.
+- [x] Review and mark `Accepted` before F-0102 starts.
+- [x] F-0102: implement rotation + reuse detection with tests for the replay scenario.
 - [ ] F-0404: threat model and ASVS L1 checklist covering this ADR.
+- [ ] F-0108: email verification and the `pending_verification → active` transition (deferred; no mail transport in this slice).
 
 ## Alternatives Considered — Why Rejected
 
