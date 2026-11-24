@@ -58,10 +58,22 @@ class OriginNotAllowed(AppError):
     title = "Origin not allowed"
 
 
+class Forbidden(AppError):
+    code = "forbidden"
+    status = HTTPStatus.FORBIDDEN
+    title = "You are not allowed to perform this action"
+
+
 class NotFound(AppError):
     code = "not_found"
     status = HTTPStatus.NOT_FOUND
     title = "Resource not found"
+
+
+class TicketTransitionBlocked(AppError):
+    code = "ticket_transition_not_allowed"
+    status = HTTPStatus.CONFLICT
+    title = "Ticket status cannot change like that"
 
 
 class NotReady(AppError):

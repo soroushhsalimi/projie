@@ -32,6 +32,16 @@ export const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true, title: 'داشبورد' },
   },
   {
+    path: '/tickets',
+    name: 'tickets',
+    component: () => import('@/modules/tickets/views/TicketsView.vue'),
+    meta: {
+      requiresAuth: true,
+      roles: ['manager', 'admin'],
+      title: 'درخواست‌های تعمیرات',
+    },
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
     component: () => import('@/shared/views/NotFoundView.vue'),
@@ -53,6 +63,9 @@ export function createAppRouter(history: RouterHistory = createWebHistory()): Ro
       return { name: 'login', query: { redirect: to.fullPath } }
     }
     if (to.meta.guestOnly && auth.isAuthenticated) {
+      return { name: 'dashboard' }
+    }
+    if (to.meta.roles && (!auth.user || !to.meta.roles.includes(auth.user.role))) {
       return { name: 'dashboard' }
     }
     return true

@@ -14,6 +14,7 @@ from sara_api.core.config import get_settings
 from sara_api.db.base import Base
 
 # Register models on the metadata.
+from sara_api.modules.tickets import models as _ticket_models  # noqa: F401
 from sara_api.modules.users import models as _models  # noqa: F401
 
 config = context.config

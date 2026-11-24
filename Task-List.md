@@ -175,13 +175,14 @@ graph LR
 | **F-0403** | Accessibility & performance hardening (axe audits on all primary flows, keyboard-only journey tests, Lighthouse budgets in CI, bundle-size budgets) | All | M | Backlog | `—` | `—` | 0003 | F-0307, F-0401 |
 | **F-0404** | Security review & hardening (threat model, ASVS L1 checklist, dependency audit triage, rate-limit tuning, secrets rotation, penetration-test fixes) | All | M | Backlog | `—` | `—` | 0005 | F-0402 |
 | **F-0405** | Production deployment & observability (container images, migrations in deploy pipeline, `/metrics`, error tracking, backups + tested restore, runbook, smoke tests) | Architect | M | Backlog | `—` | `—` | 0011 | F-0403, F-0404 |
+| **F-0406** | Maintenance & repair tickets — manager side (queue with status filter and pagination, ticket detail with message thread, reply, status `open → under_review → resolved`, role enforcement) | Manager / Admin | S | In Progress | `SPEC-0004` | `PLAN-0004` | 0002, 0005 | F-0102 |
 
 ### Deferred / Not in V1
 
 | ID | Feature | Why deferred | Revisit when |
 |----|---------|--------------|--------------|
 | F-0501 | Online payments & invoicing | Out of V1 scope (§1.4) | A financial process is confirmed |
-| F-0502 | Maintenance & incident tickets | Adjacent domain, not core to allocation | Post-M4 feedback |
+| F-0502 | Maintenance & incident tickets | Promoted to `F-0406` for the manager side; resident submission stays deferred | Resident ticket creation requested |
 | F-0503 | Native mobile apps | Responsive web covers V1 | Real usage data demands it |
 | F-0504 | SMS notifications | Depends on a provider contract | Provider + budget available |
 | F-0505 | Multi-tenant SaaS mode | Premature; single-operator V1 | Multiple operators onboard |
@@ -238,8 +239,8 @@ Update this table whenever a feature enters or leaves `Blocked`. An empty table 
 | M1 — Identity & Access | 9 | 2 | 22% |
 | M2 — Dormitory Catalog | 6 | 0 | 0% |
 | M3 — Requests & Allocation | 7 | 0 | 0% |
-| M4 — Operations & Insight | 5 | 0 | 0% |
-| **Total** | **32** | **6** | **19%** |
+| M4 — Operations & Insight | 6 | 0 | 0% |
+| **Total** | **33** | **6** | **18%** |
 
 > Update this table in the same PR that changes a feature's status to `Done`. It is a derived view —
 > when it disagrees with §6, §6 is correct and this table must be recomputed.
@@ -252,6 +253,7 @@ Update this table whenever a feature enters or leaves `Blocked`. An empty table 
 |------|--------|----|
 | 2026-11-19 | v1.0.0 — initial backlog: 30 features across 5 milestones, gates and templates. | Architect |
 | 2026-11-19 | v1.1.0 — F-0001/0002/0003/0005 and F-0101/0102 marked Done with evidence; added F-0108 (email verification) and F-0109 (rate limiting); ADR-0005 Accepted, ADR-0012/0013 added. | Architect |
+| 2026-11-24 | v1.2.0 — F-0406 (maintenance tickets, manager side) added with SPEC-0004 / PLAN-0004; F-0502 recorded as promoted. | Architect |
 
 ---
 
