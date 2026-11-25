@@ -95,7 +95,13 @@ async function move(status: TicketAction): Promise<void> {
   actionError.value = null
   try {
     selected.value = await ticketsApi.updateStatus(selected.value.id, status)
-    await load()
+    if (filter.value === status) {
+      await load()
+    } else {
+      // Follow the ticket into its new queue so the change is visible immediately.
+      keepSelectionOnFilterChange = true
+      filter.value = status
+    }
   } catch (err) {
     actionError.value = messageFor(err)
   } finally {
@@ -103,8 +109,14 @@ async function move(status: TicketAction): Promise<void> {
   }
 }
 
+let keepSelectionOnFilterChange = false
+
 watch(filter, () => {
-  selected.value = null
+  if (keepSelectionOnFilterChange) {
+    keepSelectionOnFilterChange = false
+  } else {
+    selected.value = null
+  }
   void load()
 })
 
