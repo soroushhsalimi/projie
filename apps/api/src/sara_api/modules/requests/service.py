@@ -13,11 +13,18 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from sara_api.core.errors import NotFound, RequestAlreadyActive, RequestWithdrawalBlocked
+from sara_api.core.errors import (
+    NotFound,
+    RequestAlreadyActive,
+    RequestTransitionBlocked,
+    RequestWithdrawalBlocked,
+)
 from sara_api.domain.requests import (
     RequestStatus,
+    RequestTransitionNotAllowed,
     RoomType,
     WithdrawalNotAllowed,
+    ensure_review_transition,
     ensure_withdrawable,
 )
 from sara_api.modules.requests.models import AccommodationRequest
@@ -29,6 +36,20 @@ logger = logging.getLogger("sara.requests")
 @dataclass(frozen=True, slots=True)
 class RequestPage:
     items: list[AccommodationRequest]
+    total: int
+    page: int
+    per_page: int
+
+
+@dataclass(frozen=True, slots=True)
+class RequestQueueItem:
+    request: AccommodationRequest
+    applicant_name: str
+
+
+@dataclass(frozen=True, slots=True)
+class RequestQueuePage:
+    items: list[RequestQueueItem]
     total: int
     page: int
     per_page: int
@@ -46,6 +67,52 @@ class RequestService:
             applicant_id, limit=per_page, offset=(page - 1) * per_page
         )
         return RequestPage(items=items, total=total, page=page, per_page=per_page)
+
+    async def list_queue(
+        self,
+        *,
+        status: RequestStatus | None,
+        page: int,
+        per_page: int,
+    ) -> RequestQueuePage:
+        status_value = status.value if status is not None else None
+        total = await self._repo.count_queue(status=status_value)
+        rows = await self._repo.list_queue(
+            status=status_value,
+            limit=per_page,
+            offset=(page - 1) * per_page,
+        )
+        return RequestQueuePage(
+            items=[
+                RequestQueueItem(request=request, applicant_name=name)
+                for request, name in rows
+            ],
+            total=total,
+            page=page,
+            per_page=per_page,
+        )
+
+    async def review(
+        self, request_id: UUID, *, target: RequestStatus
+    ) -> RequestQueueItem:
+        row = await self._repo.get_with_applicant(request_id)
+        if row is None:
+            raise NotFound("Accommodation request not found.")
+        request, applicant_name = row
+        current = RequestStatus(request.status)
+        try:
+            ensure_review_transition(current, target)
+        except RequestTransitionNotAllowed as exc:
+            raise RequestTransitionBlocked(
+                f"A request in status '{current}' cannot move to '{target}'."
+            ) from exc
+        request.status = target.value
+        await self._repo.save(request)
+        logger.info(
+            "request.status.changed",
+            extra={"request_id": str(request.id), "status": target.value},
+        )
+        return RequestQueueItem(request=request, applicant_name=applicant_name)
 
     async def submit(
         self,

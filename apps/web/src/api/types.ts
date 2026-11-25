@@ -67,7 +67,8 @@ export interface TicketPage {
   meta: { page: number; per_page: number; total: number }
 }
 
-export type RequestStatus = 'submitted' | 'withdrawn'
+export type RequestStatus = 'submitted' | 'under_review' | 'approved' | 'rejected' | 'withdrawn'
+export type ReviewAction = Extract<RequestStatus, 'under_review' | 'approved' | 'rejected'>
 export type RoomType = 'single' | 'double' | 'triple' | 'quad'
 
 export interface AccommodationRequest {
@@ -84,6 +85,15 @@ export interface AccommodationRequest {
 
 export interface RequestPage {
   items: AccommodationRequest[]
+  meta: { page: number; per_page: number; total: number }
+}
+
+export interface RequestSummary extends AccommodationRequest {
+  applicant_name: string
+}
+
+export interface RequestQueuePage {
+  items: RequestSummary[]
   meta: { page: number; per_page: number; total: number }
 }
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import UTC, date, datetime
+from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_serializer, field_validator
@@ -57,6 +58,10 @@ class AccommodationRequestRead(BaseModel):
         return _iso_utc(value)
 
 
+class RequestSummaryRead(AccommodationRequestRead):
+    applicant_name: str
+
+
 class PageMeta(BaseModel):
     page: int
     per_page: int
@@ -66,3 +71,16 @@ class PageMeta(BaseModel):
 class RequestPageRead(BaseModel):
     items: list[AccommodationRequestRead]
     meta: PageMeta
+
+
+class RequestQueuePageRead(BaseModel):
+    items: list[RequestSummaryRead]
+    meta: PageMeta
+
+
+class RequestStatusUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    status: Literal[
+        RequestStatus.UNDER_REVIEW, RequestStatus.APPROVED, RequestStatus.REJECTED
+    ]

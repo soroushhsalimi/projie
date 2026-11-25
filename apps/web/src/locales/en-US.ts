@@ -136,6 +136,11 @@ export default {
     ticketsBody:
       'See residents’ repair tickets, reply to them, and move each one from “under review” to “done”.',
     ticketsCta: 'Open the ticket queue',
+    requestReviewEyebrow: 'Accommodation requests',
+    requestReviewTitle: 'Review resident requests',
+    requestReviewBody:
+      'See submitted accommodation requests, start the review, and approve or reject each one.',
+    requestReviewCta: 'Open the review queue',
   },
   tickets: {
     eyebrow: 'Maintenance',
@@ -224,6 +229,9 @@ export default {
     },
     status: {
       submitted: 'Submitted',
+      under_review: 'Under review',
+      approved: 'Approved',
+      rejected: 'Rejected',
       withdrawn: 'Withdrawn',
     },
     roomTypes: {
@@ -232,10 +240,35 @@ export default {
       triple: 'Triple',
       quad: 'Quad',
     },
+    review: {
+      title: 'Accommodation review queue',
+      eyebrow: 'Dormitory office',
+      subtitle:
+        'See submitted requests, start the review, and settle each one by approving or rejecting it.',
+      back: 'Back to dashboard',
+      total: '{count} requests in total',
+      empty: 'No requests in this status.',
+      emptyHint: 'Switch the status filter to see other requests.',
+      filtersLabel: 'Status filter',
+      changed: 'The request status changed to “{status}”.',
+      filters: {
+        all: 'All',
+        submitted: 'Submitted',
+        under_review: 'Under review',
+        approved: 'Approved',
+        rejected: 'Rejected',
+      },
+      actions: {
+        under_review: 'Start review',
+        approved: 'Approve',
+        rejected: 'Reject',
+      },
+    },
     errors: {
       request_already_active: 'You already have an active request. Withdraw it first.',
       request_not_withdrawable: 'This request can no longer be withdrawn.',
-      forbidden: 'Only residents can submit accommodation requests.',
+      request_transition_not_allowed: 'That status change is not allowed. Refresh the queue.',
+      forbidden: 'This section is only available to dormitory managers.',
       not_found: 'This request could not be found.',
       validation_error: 'Some fields need attention.',
       unknown: 'Something went wrong. Please try again.',

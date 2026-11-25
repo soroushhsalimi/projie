@@ -1,4 +1,8 @@
-"""Accommodation-request HTTP endpoints (residents only)."""
+"""Accommodation-request HTTP endpoints.
+
+Residents submit, list and withdraw their own requests; managers and admins work the review queue
+SPEC-0005 / SPEC-0006.
+"""
 
 from __future__ import annotations
 
@@ -15,8 +19,16 @@ from sara_api.modules.requests.schemas import (
     PageMeta,
     RequestCreate,
     RequestPageRead,
+    RequestQueuePageRead,
+    RequestStatusUpdate,
+    RequestSummaryRead,
 )
-from sara_api.modules.requests.service import RequestPage, RequestService
+from sara_api.modules.requests.service import (
+    RequestPage,
+    RequestQueueItem,
+    RequestQueuePage,
+    RequestService,
+)
 from sara_api.modules.users.models import User
 
 router = APIRouter(prefix="/requests", tags=["requests"])
@@ -36,10 +48,42 @@ def _read(request: AccommodationRequest) -> AccommodationRequestRead:
     )
 
 
+def _summary(item: RequestQueueItem) -> RequestSummaryRead:
+    return RequestSummaryRead(
+        **_read(item.request).model_dump(),
+        applicant_name=item.applicant_name,
+    )
+
+
 def _page(page: RequestPage) -> RequestPageRead:
     return RequestPageRead(
         items=[_read(request) for request in page.items],
         meta=PageMeta(page=page.page, per_page=page.per_page, total=page.total),
+    )
+
+
+def _queue_page(page: RequestQueuePage) -> RequestQueuePageRead:
+    return RequestQueuePageRead(
+        items=[_summary(item) for item in page.items],
+        meta=PageMeta(page=page.page, per_page=page.per_page, total=page.total),
+    )
+
+
+@router.get(
+    "/queue",
+    response_model=RequestQueuePageRead,
+    summary="List accommodation requests for review",
+    description="Manager queue over every resident, newest first, optionally filtered by status.",
+    dependencies=[Depends(require_roles(Role.MANAGER, Role.ADMIN))],
+)
+async def list_request_queue(
+    status_filter: RequestStatus | None = Query(default=None, alias="status"),
+    page: int = Query(default=1, ge=1),
+    per_page: int = Query(default=20, ge=1, le=100),
+    service: RequestService = Depends(get_request_service),
+) -> RequestQueuePageRead:
+    return _queue_page(
+        await service.list_queue(status=status_filter, page=page, per_page=per_page)
     )
 
 
@@ -63,7 +107,7 @@ async def list_requests(
     response_model=AccommodationRequestRead,
     status_code=status.HTTP_201_CREATED,
     summary="Submit an accommodation request",
-    description="A resident may hold at most one active (submitted) request.",
+    description="A resident may hold at most one active (submitted or under-review) request.",
 )
 async def create_request(
     payload: RequestCreate,
@@ -79,6 +123,26 @@ async def create_request(
         note=payload.note,
     )
     return _read(request)
+
+
+@router.patch(
+    "/{request_id}/status",
+    response_model=RequestSummaryRead,
+    summary="Review an accommodation request",
+    description=(
+        "Legal moves: submitted → under_review, submitted → approved, submitted → rejected, "
+        "under_review → approved, under_review → rejected."
+    ),
+    dependencies=[Depends(require_roles(Role.MANAGER, Role.ADMIN))],
+)
+async def review_request(
+    request_id: UUID,
+    payload: RequestStatusUpdate,
+    service: RequestService = Depends(get_request_service),
+) -> RequestSummaryRead:
+    return _summary(
+        await service.review(request_id, target=RequestStatus(payload.status))
+    )
 
 
 @router.post(

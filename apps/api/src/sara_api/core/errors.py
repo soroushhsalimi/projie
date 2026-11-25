@@ -88,6 +88,12 @@ class RequestWithdrawalBlocked(AppError):
     title = "This accommodation request cannot be withdrawn"
 
 
+class RequestTransitionBlocked(AppError):
+    code = "request_transition_not_allowed"
+    status = HTTPStatus.CONFLICT
+    title = "Request status cannot change like that"
+
+
 class NotReady(AppError):
     code = "not_ready"
     status = HTTPStatus.SERVICE_UNAVAILABLE

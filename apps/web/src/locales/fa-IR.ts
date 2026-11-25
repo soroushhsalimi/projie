@@ -136,6 +136,11 @@ export default {
     ticketsBody:
       'تیکت‌های تعمیرات ساکنان را ببین، پاسخ بده و وضعیت را از «در حال بررسی» به «انجام شد» ببر.',
     ticketsCta: 'باز کردن صف تیکت‌ها',
+    requestReviewEyebrow: 'درخواست‌های اسکان',
+    requestReviewTitle: 'بررسی درخواست‌های ساکنان',
+    requestReviewBody:
+      'درخواست‌های ثبت‌شدهٔ ساکنان را ببین، بررسی را شروع کن و هر درخواست را تأیید یا رد کن.',
+    requestReviewCta: 'باز کردن صف بررسی',
   },
   tickets: {
     eyebrow: 'مدیریت تعمیرات',
@@ -224,6 +229,9 @@ export default {
     },
     status: {
       submitted: 'ثبت‌شده',
+      under_review: 'در حال بررسی',
+      approved: 'تأییدشده',
+      rejected: 'ردشده',
       withdrawn: 'لغوشده',
     },
     roomTypes: {
@@ -232,10 +240,35 @@ export default {
       triple: 'سه‌نفره',
       quad: 'چهارنفره',
     },
+    review: {
+      title: 'بررسی درخواست‌های اسکان',
+      eyebrow: 'دفتر خوابگاه',
+      subtitle:
+        'درخواست‌های ثبت‌شده را ببین، بررسی را شروع کن و با تأیید یا رد، وضعیت را روشن کن.',
+      back: 'بازگشت به داشبورد',
+      total: 'مجموع {count} درخواست',
+      empty: 'درخواستی در این وضعیت نیست.',
+      emptyHint: 'با تغییر فیلتر وضعیت، درخواست‌های دیگر را ببین.',
+      filtersLabel: 'فیلتر وضعیت',
+      changed: 'وضعیت درخواست به «{status}» تغییر کرد.',
+      filters: {
+        all: 'همه',
+        submitted: 'ثبت‌شده',
+        under_review: 'در حال بررسی',
+        approved: 'تأییدشده',
+        rejected: 'ردشده',
+      },
+      actions: {
+        under_review: 'شروع بررسی',
+        approved: 'تأیید',
+        rejected: 'رد درخواست',
+      },
+    },
     errors: {
       request_already_active: 'یک درخواست فعال داری؛ اول آن را لغو کن.',
       request_not_withdrawable: 'این درخواست دیگر قابل لغو نیست.',
-      forbidden: 'ثبت درخواست اسکان فقط برای ساکنان است.',
+      request_transition_not_allowed: 'این تغییر وضعیت مجاز نیست. لیست را به‌روز کن.',
+      forbidden: 'دسترسی به این بخش فقط برای مدیران خوابگاه است.',
       not_found: 'این درخواست پیدا نشد.',
       validation_error: 'چند فیلد نیاز به اصلاح دارد.',
       unknown: 'خطایی پیش آمد. دوباره تلاش کن.',
