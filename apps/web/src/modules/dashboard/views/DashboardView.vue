@@ -195,6 +195,7 @@ async function signOut(): Promise<void> {
         </section>
 
         <section
+          v-if="auth.user.role === 'user'"
           class="relative overflow-hidden rounded-[1.75rem] border border-teal-200/70 bg-gradient-to-bl from-teal-50 via-white to-sand-50 p-6 shadow-sm lg:col-span-3"
         >
           <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -205,12 +206,15 @@ async function signOut(): Promise<void> {
               <h2 class="mt-2 text-lg font-extrabold text-ink-950">{{ t('dashboard.nextStepTitle') }}</h2>
               <p class="mt-2 text-sm leading-7 text-ink-500">{{ t('dashboard.nextStepBody') }}</p>
             </div>
-            <span
-              class="inline-flex shrink-0 items-center gap-2 self-start rounded-xl border border-ink-200 bg-white/80 px-4 py-2.5 text-xs font-semibold text-ink-500"
+            <RouterLink
+              to="/requests"
+              class="inline-flex shrink-0 items-center gap-2 self-start rounded-xl bg-teal-600 px-4 py-2.5 text-xs font-bold text-white transition hover:bg-teal-700"
             >
-              <span class="h-2 w-2 rounded-full bg-gold-400" aria-hidden="true" />
-              {{ t('common.soon') }}
-            </span>
+              {{ t('dashboard.nextStepCta') }}
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 19l-5-7 5-7M5 12h9" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </RouterLink>
           </div>
         </section>
       </div>

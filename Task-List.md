@@ -158,7 +158,7 @@ graph LR
 
 | ID | Feature | Persona | MoSCoW | Status | SPEC | PLAN | ADR | Depends on |
 |----|---------|---------|:------:|--------|------|------|-----|------------|
-| **F-0301** | Accommodation request submission (draft save/resume, dormitory + room-type preference, desired period, applicant details, document upload, submit transition, one active request per dormitory rule) | User | M | Backlog | `—` | `—` | 0002 | F-0205 |
+| **F-0301** | Accommodation request submission — resident slice (form with dormitory preference, room type, desired period, optional note; submit; own-request list; withdraw; one active request per resident. Free-text dormitory until the catalog lands; draft/resume and documents still deferred) | User | M | In Progress | `SPEC-0005` | `PLAN-0005` | 0002 | F-0102 |
 | **F-0302** | Request review workflow (manager queue with filters/SLA, claim → `under_review`, approve / reject with mandatory reason / request more info, comments timeline, state-machine enforcement, concurrency-safe transitions) | Manager | M | Backlog | `—` | `—` | 0008 | F-0301 |
 | **F-0303** | Bed allocation (suggested beds by policy, manual assignment, occupancy lock/`FOR UPDATE`, partial unique index, rollback on conflict, allocation event + audit, notification trigger) | Manager | M | Backlog | `—` | `—` | 0008 | F-0302, F-0204 |
 | **F-0304** | Residency lifecycle (check-in, extension, room transfer, check-out, early departure, occupancy status sync, resident self-service view) | Manager / User | M | Backlog | `—` | `—` | 0008 | F-0303 |
@@ -254,6 +254,7 @@ Update this table whenever a feature enters or leaves `Blocked`. An empty table 
 | 2026-11-19 | v1.0.0 — initial backlog: 30 features across 5 milestones, gates and templates. | Architect |
 | 2026-11-19 | v1.1.0 — F-0001/0002/0003/0005 and F-0101/0102 marked Done with evidence; added F-0108 (email verification) and F-0109 (rate limiting); ADR-0005 Accepted, ADR-0012/0013 added. | Architect |
 | 2026-11-24 | v1.2.0 — F-0406 (maintenance tickets, manager side) added with SPEC-0004 / PLAN-0004; F-0502 recorded as promoted. | Architect |
+| 2026-11-25 | v1.3.0 — F-0301 resident slice specified in SPEC-0005 / PLAN-0005 (free-text dormitory until F-0205; manager review still F-0302). | Architect |
 
 ---
 

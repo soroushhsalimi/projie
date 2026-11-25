@@ -13,6 +13,7 @@ from sara_api.core.config import Settings
 from sara_api.core.errors import Forbidden, InvalidToken, OriginNotAllowed
 from sara_api.domain.accounts import Role
 from sara_api.modules.auth.service import AuthService
+from sara_api.modules.requests.service import RequestService
 from sara_api.modules.tickets.service import TicketService
 from sara_api.modules.users.models import User
 
@@ -82,6 +83,10 @@ def require_roles(*roles: Role) -> Callable[..., Awaitable[User]]:
 
 def get_ticket_service(session: AsyncSession = Depends(get_db)) -> TicketService:
     return TicketService(session)
+
+
+def get_request_service(session: AsyncSession = Depends(get_db)) -> RequestService:
+    return RequestService(session)
 
 
 async def require_trusted_origin(

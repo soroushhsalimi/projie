@@ -42,6 +42,12 @@ export const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/requests',
+    name: 'requests',
+    component: () => import('@/modules/requests/views/RequestsView.vue'),
+    meta: { requiresAuth: true, roles: ['user'], title: 'درخواست اسکان' },
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
     component: () => import('@/shared/views/NotFoundView.vue'),

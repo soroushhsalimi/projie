@@ -67,6 +67,34 @@ export interface TicketPage {
   meta: { page: number; per_page: number; total: number }
 }
 
+export type RequestStatus = 'submitted' | 'withdrawn'
+export type RoomType = 'single' | 'double' | 'triple' | 'quad'
+
+export interface AccommodationRequest {
+  id: string
+  dormitory_name: string
+  room_type: RoomType
+  desired_move_in: string
+  duration_months: number
+  note: string | null
+  status: RequestStatus
+  created_at: string
+  updated_at: string
+}
+
+export interface RequestPage {
+  items: AccommodationRequest[]
+  meta: { page: number; per_page: number; total: number }
+}
+
+export interface RequestCreatePayload {
+  dormitory_name: string
+  room_type: RoomType
+  desired_move_in: string
+  duration_months: number
+  note?: string | null
+}
+
 export interface FieldProblem {
   field: string
   message: string

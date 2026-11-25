@@ -76,6 +76,18 @@ class TicketTransitionBlocked(AppError):
     title = "Ticket status cannot change like that"
 
 
+class RequestAlreadyActive(AppError):
+    code = "request_already_active"
+    status = HTTPStatus.CONFLICT
+    title = "An active accommodation request already exists"
+
+
+class RequestWithdrawalBlocked(AppError):
+    code = "request_not_withdrawable"
+    status = HTTPStatus.CONFLICT
+    title = "This accommodation request cannot be withdrawn"
+
+
 class NotReady(AppError):
     code = "not_ready"
     status = HTTPStatus.SERVICE_UNAVAILABLE
