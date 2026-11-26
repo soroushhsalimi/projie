@@ -100,6 +100,18 @@ class RequestTransitionBlocked(AppError):
     title = "Request status cannot change like that"
 
 
+class ComplaintTransitionBlocked(AppError):
+    code = "complaint_transition_not_allowed"
+    status = HTTPStatus.CONFLICT
+    title = "Complaint status cannot change like that"
+
+
+class ComplaintAlreadyAnsweredConflict(AppError):
+    code = "complaint_already_answered"
+    status = HTTPStatus.CONFLICT
+    title = "This complaint already has an initial response"
+
+
 class NotReady(AppError):
     code = "not_ready"
     status = HTTPStatus.SERVICE_UNAVAILABLE

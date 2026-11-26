@@ -42,6 +42,16 @@ export const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/complaints',
+    name: 'complaints',
+    component: () => import('@/modules/complaints/views/ComplaintsView.vue'),
+    meta: {
+      requiresAuth: true,
+      roles: ['manager', 'admin'],
+      title: 'مدیریت شکایات',
+    },
+  },
+  {
     path: '/requests',
     name: 'requests',
     component: () => import('@/modules/requests/views/RequestsView.vue'),

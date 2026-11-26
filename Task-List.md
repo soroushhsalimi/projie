@@ -176,6 +176,7 @@ graph LR
 | **F-0404** | Security review & hardening (threat model, ASVS L1 checklist, dependency audit triage, rate-limit tuning, secrets rotation, penetration-test fixes) | All | M | Backlog | `—` | `—` | 0005 | F-0402 |
 | **F-0405** | Production deployment & observability (container images, migrations in deploy pipeline, `/metrics`, error tracking, backups + tested restore, runbook, smoke tests) | Architect | M | Backlog | `—` | `—` | 0011 | F-0403, F-0404 |
 | **F-0406** | Maintenance & repair tickets — manager side (queue with status filter and pagination, ticket detail with message thread, reply, status `open → under_review → resolved`, role enforcement) | Manager / Admin | S | In Progress | `SPEC-0004` | `PLAN-0004` | 0002, 0005 | F-0102 |
+| **F-0407** | Complaints management — manager side (queue with status filter and pagination, complaint detail, `submitted → in_review`, one recorded initial response with `answered` status, role enforcement; resident filing deferred) | Manager / Admin | S | In Progress | `SPEC-0007` | `PLAN-0007` | 0002, 0005 | F-0102 |
 
 ### Deferred / Not in V1
 
@@ -257,6 +258,7 @@ Update this table whenever a feature enters or leaves `Blocked`. An empty table 
 | 2026-11-25 | v1.3.0 — F-0301 resident slice specified in SPEC-0005 / PLAN-0005 (free-text dormitory until F-0205; manager review still F-0302). | Architect |
 | 2026-11-25 | v1.4.0 — F-0302 manager queue slice specified in SPEC-0006 / PLAN-0006 and moved to In Progress (status changes only; claim, reason, timeline and SLA deferred). | Architect |
 | 2026-11-25 | v1.5.0 — F-0101 amended by SPEC-0002 v1.1.0: registration now requires the national ID (unique), mobile number and home address. | Architect |
+| 2026-11-26 | v1.6.0 — F-0407 (complaints: review + initial response, manager side) added with SPEC-0007 / PLAN-0007. | Architect |
 
 ---
 

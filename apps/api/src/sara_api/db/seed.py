@@ -10,6 +10,7 @@ from sara_api.core.config import get_settings
 from sara_api.core.security import PasswordHasher
 from sara_api.db.base import Base
 from sara_api.db.session import build_engine, build_session_factory
+from sara_api.modules.complaints.models import Complaint, ComplaintResponse
 from sara_api.modules.tickets.models import Ticket, TicketMessage
 from sara_api.modules.users.models import User
 
@@ -77,6 +78,32 @@ DEMO_TICKETS = [
 ]
 
 
+# (subject, description, category, status, initial response by the manager or None)
+DEMO_COMPLAINTS = [
+    (
+        "سر و صدای شبانه در طبقه سوم",
+        "هر شب بعد از ساعت ۱۲ صدای بلند و رفت‌وآمد در راهروی طبقه سوم ادامه دارد.",
+        "noise",
+        "submitted",
+        None,
+    ),
+    (
+        "نظافت نکردن سرویس‌های بهداشتی",
+        "سرویس‌های بهداشتی طبقه دوم دو روز است تمیز نشده‌اند.",
+        "cleanliness",
+        "in_review",
+        None,
+    ),
+    (
+        "خرابی چراغ راه‌پله اضطراری",
+        "چراغ راه‌پلهٔ اضطراری بلوک ب خاموش است و شب‌ها مسیر خطرناک می‌شود.",
+        "safety",
+        "answered",
+        "چراغ تعویض شد؛ لطفاً اگر دوباره خاموش شد اطلاع بدهید.",
+    ),
+]
+
+
 async def seed() -> list[str]:
     settings = get_settings()
     engine = build_engine(settings)
@@ -130,6 +157,33 @@ async def seed() -> list[str]:
                         TicketMessage(ticket_id=ticket.id, author_id=author.id, body=body)
                     )
             created.append("demo tickets")
+
+        complaint_count = await session.execute(select(func.count()).select_from(Complaint))
+        if complaint_count.scalar_one() == 0:
+            users = {
+                user.email: user
+                for user in (await session.execute(select(User))).scalars().all()
+            }
+            for subject, description, category, status, response_body in DEMO_COMPLAINTS:
+                complaint = Complaint(
+                    resident_id=users["resident@sara.ir"].id,
+                    subject=subject,
+                    description=description,
+                    category=category,
+                    status=status,
+                )
+                session.add(complaint)
+                await session.flush()
+                if response_body is not None:
+                    session.add(
+                        ComplaintResponse(
+                            complaint_id=complaint.id,
+                            responder_id=users["manager@sara.ir"].id,
+                            body=response_body,
+                        )
+                    )
+            created.append("demo complaints")
+
 
         await session.commit()
 

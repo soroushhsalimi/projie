@@ -16,9 +16,11 @@ from sara_api.core.problem import register_exception_handlers
 from sara_api.db.base import Base
 from sara_api.db.session import build_engine, build_session_factory
 from sara_api.modules.auth.router import router as auth_router
-from sara_api.modules.health.router import router as health_router
 
 # Importing the models registers their tables on Base.metadata.
+from sara_api.modules.complaints import models as _complaint_models  # noqa: F401
+from sara_api.modules.complaints.router import router as complaints_router
+from sara_api.modules.health.router import router as health_router
 from sara_api.modules.requests import models as _request_models  # noqa: F401
 from sara_api.modules.requests.router import router as requests_router
 from sara_api.modules.tickets import models as _ticket_models  # noqa: F401
@@ -89,6 +91,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(auth_router, prefix="/api/v1")
     app.include_router(tickets_router, prefix="/api/v1")
     app.include_router(requests_router, prefix="/api/v1")
+    app.include_router(complaints_router, prefix="/api/v1")
 
     @app.get("/", include_in_schema=False)
     async def index() -> dict[str, str]:

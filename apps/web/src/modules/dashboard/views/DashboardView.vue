@@ -201,6 +201,34 @@ async function signOut(): Promise<void> {
           <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="max-w-2xl">
               <p class="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-teal-700">
+                {{ t('dashboard.complaintsEyebrow') }}
+              </p>
+              <h2 class="mt-2 text-lg font-extrabold text-ink-950">
+                {{ t('dashboard.complaintsTitle') }}
+              </h2>
+              <p class="mt-2 text-sm leading-7 text-ink-500">
+                {{ t('dashboard.complaintsBody') }}
+              </p>
+            </div>
+            <RouterLink
+              to="/complaints"
+              class="inline-flex shrink-0 items-center gap-2 self-start rounded-xl bg-teal-600 px-4 py-2.5 text-xs font-bold text-white transition hover:bg-teal-700"
+            >
+              {{ t('dashboard.complaintsCta') }}
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 19l-5-7 5-7M5 12h9" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </RouterLink>
+          </div>
+        </section>
+
+        <section
+          v-if="auth.user.role !== 'user'"
+          class="rounded-[1.75rem] border border-ink-100 bg-white p-6 shadow-sm lg:col-span-3"
+        >
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="max-w-2xl">
+              <p class="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-teal-700">
                 {{ t('dashboard.requestReviewEyebrow') }}
               </p>
               <h2 class="mt-2 text-lg font-extrabold text-ink-950">

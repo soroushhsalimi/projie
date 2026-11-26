@@ -71,6 +71,42 @@ export interface TicketPage {
   meta: { page: number; per_page: number; total: number }
 }
 
+export type ComplaintStatus = 'submitted' | 'in_review' | 'answered'
+export type ComplaintCategory =
+  | 'noise'
+  | 'cleanliness'
+  | 'safety'
+  | 'staff'
+  | 'facilities'
+  | 'other'
+
+export interface ComplaintSummary {
+  id: string
+  subject: string
+  category: ComplaintCategory
+  status: ComplaintStatus
+  resident_name: string
+  created_at: string
+  updated_at: string
+}
+
+export interface ComplaintResponseRecord {
+  id: string
+  body: string
+  responder_name: string
+  created_at: string
+}
+
+export interface ComplaintDetail extends ComplaintSummary {
+  description: string
+  response: ComplaintResponseRecord | null
+}
+
+export interface ComplaintPage {
+  items: ComplaintSummary[]
+  meta: { page: number; per_page: number; total: number }
+}
+
 export type RequestStatus = 'submitted' | 'under_review' | 'approved' | 'rejected' | 'withdrawn'
 export type ReviewAction = Extract<RequestStatus, 'under_review' | 'approved' | 'rejected'>
 export type RoomType = 'single' | 'double' | 'triple' | 'quad'
