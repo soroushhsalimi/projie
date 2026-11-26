@@ -20,6 +20,7 @@ from sara_api.core.errors import (
     InvalidCredentials,
     InvalidSession,
     InvalidToken,
+    NationalIdAlreadyRegistered,
     ValidationFailed,
 )
 from sara_api.core.security import (
@@ -75,7 +76,9 @@ class AuthService:
         full_name: str,
         email: str,
         password: str,
-        phone: str | None,
+        national_id: str,
+        phone: str,
+        address: str,
         user_agent: str | None = None,
         ip: str | None = None,
     ) -> AuthResult:
@@ -87,12 +90,18 @@ class AuthService:
 
         if await self._users.get_by_email(normalized) is not None:
             raise EmailAlreadyRegistered("An account with this email already exists.")
+        if await self._users.get_by_national_id(national_id) is not None:
+            raise NationalIdAlreadyRegistered(
+                "An account with this national ID already exists."
+            )
 
         user = User(
             email=normalized,
             password_hash=self._hasher.hash(password),
             full_name=full_name.strip(),
+            national_id=national_id,
             phone=phone,
+            address=address,
             role=Role.USER.value,
             status=UserStatus.ACTIVE.value,
         )

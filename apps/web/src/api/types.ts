@@ -5,7 +5,9 @@ export interface User {
   id: string
   email: string
   full_name: string
+  national_id: string | null
   phone: string | null
+  address: string | null
   role: Role
   status: UserStatus
   created_at: string
@@ -26,8 +28,10 @@ export interface LoginPayload {
 export interface RegisterPayload {
   full_name: string
   email: string
+  national_id: string
+  phone: string
+  address: string
   password: string
-  phone?: string | null
 }
 
 export type TicketStatus = 'open' | 'under_review' | 'resolved'

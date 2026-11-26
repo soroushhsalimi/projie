@@ -70,7 +70,9 @@ async def register(
         full_name=payload.full_name,
         email=str(payload.email),
         password=payload.password,
+        national_id=payload.national_id,
         phone=payload.phone,
+        address=payload.address,
         user_agent=meta.user_agent,
         ip=meta.ip,
     )

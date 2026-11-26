@@ -10,6 +10,8 @@ from sara_api.domain.accounts import (
     MAX_PASSWORD_LENGTH,
     MIN_PASSWORD_LENGTH,
     PasswordPolicyViolation,
+    normalize_mobile,
+    normalize_national_id,
     validate_password,
 )
 from sara_api.modules.users.schemas import UserRead
@@ -21,7 +23,9 @@ class RegisterRequest(BaseModel):
     full_name: str = Field(min_length=3, max_length=120)
     email: EmailStr
     password: str = Field(min_length=MIN_PASSWORD_LENGTH, max_length=MAX_PASSWORD_LENGTH)
-    phone: str | None = Field(default=None, max_length=20)
+    national_id: str = Field(max_length=20)
+    phone: str = Field(max_length=20)
+    address: str = Field(min_length=5, max_length=500)
 
     @field_validator("full_name")
     @classmethod
@@ -31,19 +35,22 @@ class RegisterRequest(BaseModel):
             raise ValueError("Full name must be at least 3 characters long.")
         return cleaned
 
+    @field_validator("national_id")
+    @classmethod
+    def _clean_national_id(cls, value: str) -> str:
+        return normalize_national_id(value)
+
     @field_validator("phone")
     @classmethod
-    def _clean_phone(cls, value: str | None) -> str | None:
-        if value is None:
-            return None
-        cleaned = value.strip()
-        if not cleaned:
-            return None
-        digits = cleaned.replace(" ", "").replace("-", "")
-        if digits.startswith("+"):
-            digits = digits[1:]
-        if not digits.isdigit() or not (7 <= len(digits) <= 15):
-            raise ValueError("Phone must contain 7 to 15 digits.")
+    def _clean_phone(cls, value: str) -> str:
+        return normalize_mobile(value)
+
+    @field_validator("address")
+    @classmethod
+    def _clean_address(cls, value: str) -> str:
+        cleaned = " ".join(value.split())
+        if len(cleaned) < 5:
+            raise ValueError("Address must be at least 5 characters long.")
         return cleaned
 
     @model_validator(mode="after")

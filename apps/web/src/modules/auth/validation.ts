@@ -1,5 +1,16 @@
 import { z } from 'zod'
 
+const DIGITS = '۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩'
+
+/** Accept Persian/Arabic-Indic digits so the resident may type either. */
+export function normalizeDigits(value: string): string {
+  return value.replace(/[۰-۹٠-٩]/g, (digit) => String(DIGITS.indexOf(digit) % 10))
+}
+
+function compact(value: string): string {
+  return normalizeDigits(value).replace(/[\s-]/g, '')
+}
+
 export const loginSchema = z.object({
   email: z.string().trim().min(1, 'validation.required').email('validation.email'),
   password: z.string().min(1, 'validation.required'),
@@ -16,13 +27,29 @@ export const registerSchema = z
       .min(3, 'validation.fullName')
       .max(120, 'validation.fullName'),
     email: z.string().trim().min(1, 'validation.required').email('validation.email'),
+    national_id: z
+      .string()
+      .trim()
+      .min(1, 'validation.required')
+      .transform(compact)
+      .refine((value) => /^\d{10}$/.test(value), 'validation.nationalId'),
     phone: z
       .string()
       .trim()
-      .refine(
-        (value) => value.length === 0 || /^\+?[\d\s-]{7,20}$/.test(value),
-        'validation.phone',
-      ),
+      .min(1, 'validation.required')
+      .transform((value) => {
+        const digits = compact(value)
+        if (digits.startsWith('+98')) return `0${digits.slice(3)}`
+        if (digits.startsWith('0098')) return `0${digits.slice(4)}`
+        return digits
+      })
+      .refine((value) => /^09\d{9}$/.test(value), 'validation.phone'),
+    address: z
+      .string()
+      .trim()
+      .min(1, 'validation.required')
+      .min(5, 'validation.address')
+      .max(500, 'validation.address'),
     password: z
       .string()
       .min(10, 'validation.passwordLength')

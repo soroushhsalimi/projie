@@ -6,6 +6,7 @@ from uuid import uuid4
 
 from sqlalchemy import select
 
+from helpers import registration_body
 from sara_api.modules.users.models import User
 
 PASSWORD = "CorrectHorseBatteryStaple"
@@ -24,8 +25,7 @@ PAYLOAD = {
 
 async def _register(client, email: str, full_name: str) -> str:  # type: ignore[no-untyped-def]
     response = await client.post(
-        "/api/v1/auth/register",
-        json={"full_name": full_name, "email": email, "password": PASSWORD},
+        "/api/v1/auth/register", json=registration_body(email, full_name, PASSWORD)
     )
     assert response.status_code == 201, response.text
     return response.json()["access_token"]

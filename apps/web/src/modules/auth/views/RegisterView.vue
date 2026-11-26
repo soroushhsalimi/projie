@@ -18,8 +18,10 @@ const router = useRouter()
 
 const form = reactive({
   full_name: '',
-  email: '',
+  national_id: '',
   phone: '',
+  email: '',
+  address: '',
   password: '',
   confirmPassword: '',
   acceptTerms: false,
@@ -45,6 +47,14 @@ function handleApiError(error: unknown): void {
       errors.value = { email: t('auth.errors.email_already_registered') }
       formError.value = t('auth.errors.email_already_registered')
       document.getElementById('email')?.focus()
+      return
+    }
+    if (error.code === 'national_id_already_registered') {
+      errors.value = {
+        national_id: t('auth.errors.national_id_already_registered'),
+      }
+      formError.value = t('auth.errors.national_id_already_registered')
+      document.getElementById('national_id')?.focus()
       return
     }
     if (error.code === 'validation_error') {
@@ -79,8 +89,10 @@ async function submit(): Promise<void> {
     await auth.register({
       full_name: parsed.data.full_name,
       email: parsed.data.email,
+      national_id: parsed.data.national_id,
+      phone: parsed.data.phone,
+      address: parsed.data.address,
       password: parsed.data.password,
-      phone: parsed.data.phone ? parsed.data.phone : null,
     })
     await router.push('/dashboard')
   } catch (error) {
@@ -139,16 +151,51 @@ async function submit(): Promise<void> {
         </FormField>
 
         <FormField
+          id="national_id"
+          v-model="form.national_id"
+          :label="t('auth.nationalId')"
+          :placeholder="t('auth.nationalIdPlaceholder')"
+          :error="errors.national_id"
+          inputmode="numeric"
+          ltr
+          required
+        />
+
+        <FormField
           id="phone"
           v-model="form.phone"
-          :label="`${t('auth.phone')} (${t('common.optional')})`"
+          :label="t('auth.phone')"
           :placeholder="t('auth.phonePlaceholder')"
           :error="errors.phone"
           type="tel"
           inputmode="tel"
           autocomplete="tel"
           ltr
+          required
         />
+
+        <div>
+          <label for="address" class="field-label">
+            <span>
+              {{ t('auth.address') }}
+              <span class="text-red-500" aria-hidden="true">*</span>
+            </span>
+          </label>
+          <textarea
+            id="address"
+            v-model="form.address"
+            rows="2"
+            maxlength="500"
+            required
+            class="field-input min-h-20"
+            :placeholder="t('auth.addressPlaceholder')"
+            :aria-invalid="Boolean(errors.address)"
+            :aria-describedby="errors.address ? 'address-error' : undefined"
+          ></textarea>
+          <p v-if="errors.address" id="address-error" class="field-error" aria-live="polite">
+            {{ errors.address }}
+          </p>
+        </div>
 
         <div>
           <PasswordField

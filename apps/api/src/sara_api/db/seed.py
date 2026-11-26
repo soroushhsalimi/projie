@@ -14,9 +14,33 @@ from sara_api.modules.tickets.models import Ticket, TicketMessage
 from sara_api.modules.users.models import User
 
 DEMO_ACCOUNTS = [
-    ("resident@sara.ir", "Resident12345!", "سارا محمدی", "user"),
-    ("manager@sara.ir", "Manager12345!", "رضا کریمی", "manager"),
-    ("admin@sara.ir", "Admin12345!", "مدیر سامانه", "admin"),
+    (
+        "resident@sara.ir",
+        "Resident12345!",
+        "سارا محمدی",
+        "user",
+        "0012345671",
+        "09121234567",
+        "تهران، خیابان آزادی، خوابگاه الزهرا",
+    ),
+    (
+        "manager@sara.ir",
+        "Manager12345!",
+        "رضا کریمی",
+        "manager",
+        "0012345672",
+        "09121234568",
+        "تهران، خیابان کارگر، دفتر خوابگاه",
+    ),
+    (
+        "admin@sara.ir",
+        "Admin12345!",
+        "مدیر سامانه",
+        "admin",
+        "0012345673",
+        "09121234569",
+        "تهران، خیابان ولیعصر، دفتر مرکزی",
+    ),
 ]
 
 # (subject, description, category, status, [(author_email, body), ...])
@@ -64,7 +88,7 @@ async def seed() -> list[str]:
         await connection.run_sync(Base.metadata.create_all)
 
     async with session_factory() as session:
-        for email, password, full_name, role in DEMO_ACCOUNTS:
+        for email, password, full_name, role, national_id, phone, address in DEMO_ACCOUNTS:
             existing = await session.execute(select(User).where(User.email == email))
             if existing.scalar_one_or_none() is not None:
                 continue
@@ -73,6 +97,9 @@ async def seed() -> list[str]:
                     email=email,
                     password_hash=hasher.hash(password),
                     full_name=full_name,
+                    national_id=national_id,
+                    phone=phone,
+                    address=address,
                     role=role,
                     status="active",
                 )

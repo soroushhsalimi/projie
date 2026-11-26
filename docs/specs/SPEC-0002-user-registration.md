@@ -11,7 +11,7 @@
 | **Plan** | [`PLAN-0002`](../plans/PLAN-0002-user-registration.md) |
 | **ADRs** | [`ADR-0005`](../adr/ADR-0005-authentication-and-authorization.md), [`ADR-0012`](../adr/ADR-0012-local-and-test-database.md) |
 | **Created** | 2026-11-19 |
-| **Last updated** | 2026-11-19 |
+| **Last updated** | 2026-11-25 |
 
 ---
 
@@ -29,7 +29,7 @@ to the request flow without a second round-trip.
 
 **Goals**
 
-- G1 — A visitor can create a resident account with name, email, password and optional phone.
+- G1 — A visitor can create a resident account with name, national ID, mobile number, home address, email and password.
 - G2 — Email uniqueness is enforced by the database, not only by a pre-check.
 - G3 — Passwords are stored only as Argon2id hashes and never logged.
 - G4 — Successful registration returns an authenticated session (access token + refresh cookie).
@@ -62,15 +62,18 @@ New or changed permissions: none. Registration is public by design.
 
 | ID | Requirement | Priority |
 |----|-------------|:--------:|
-| FR-1 | `POST /api/v1/auth/register` accepts `full_name`, `email`, `password`, optional `phone`. | M |
+| FR-1 | `POST /api/v1/auth/register` accepts `full_name`, `email`, `password`, and the required identity fields `national_id`, `phone` and `address`. | M |
 | FR-2 | Email is trimmed, lower-cased and validated; uniqueness is case-insensitive. | M |
 | FR-3 | Password must be 10–128 characters, must not be a known-common password, and must not contain the email local-part. | M |
 | FR-4 | Password is hashed with Argon2id; the plaintext never leaves the request scope and is never logged. | M |
 | FR-5 | The created account has role `user` and status `active`; client-supplied role fields are ignored/rejected. | M |
 | FR-6 | A duplicate email returns `409` with code `email_already_registered`, without revealing whether the password was valid. | M |
 | FR-7 | Success returns `201` with the public profile and an access token, and sets the refresh cookie. | M |
-| FR-8 | Validation failures return `422` problem details with field pointers (`full_name`, `email`, `password`, `phone`). | M |
+| FR-8 | Validation failures return `422` problem details with field pointers (`full_name`, `email`, `password`, `national_id`, `phone`, `address`). | M |
 | FR-9 | The public profile never includes the password hash, token hashes or internal session identifiers. | M |
+| FR-10 | `national_id` is normalized to exactly 10 ASCII digits (Persian/Arabic-Indic digits and separators accepted) and is unique across accounts; a duplicate returns `409 national_id_already_registered`. | M |
+| FR-11 | `phone` is a required Iranian mobile number, normalized to `09xxxxxxxxx`; `+98…` and `0098…` prefixes are accepted. | M |
+| FR-12 | `address` is required, 5–500 characters after collapsing whitespace. | M |
 
 ## 6. Acceptance Criteria
 
@@ -92,11 +95,17 @@ appears nowhere in the response.
 response is `422` (unknown field) and no account is created; the role can only be assigned by an
 admin provisioner (`F-0105`).
 
+**AC-6 (FR-10…FR-12)** — *Given* a payload without `national_id`, `phone` or `address`, *when* it is
+posted, *then* the response is `422` and each missing field is pointed at; *given* `national_id =
+"۰۰۱۲۳۴۵۶۷۹"` and `phone = "+989121234567"`, *then* the stored values are `0012345679` and
+`09121234567`; *given* the same national ID with another email, *then* `409
+national_id_already_registered`.
+
 ## 7. Data Model Impact
 
 - **New tables:** `user` (account), plus `refresh_token` introduced here because registration issues a session.
 - **Changed tables:** none.
-- **Constraints/indexes:** `uq_user_email` on `lower(email)` semantics (email stored normalized; a unique constraint on `email`), index on `user.role` for admin lists.
+- **Constraints/indexes:** `uq_user_email` on `lower(email)` semantics (email stored normalized; a unique constraint on `email`), a unique index on `user.national_id`, index on `user.role` for admin lists.
 - **Migration strategy:** single additive migration.
 - **Backfill:** none.
 - **Retention:** hard delete is not exposed; accounts are deactivated (`F-0105`).
@@ -107,7 +116,9 @@ user
   email          varchar(320) not null unique
   password_hash  varchar(255) not null
   full_name      varchar(120) not null
-  phone          varchar(20)  null
+  national_id    varchar(10)  null  unique (required by the API since SPEC-0002 v1.1.0)
+  phone          varchar(20)  null  (required by the API since SPEC-0002 v1.1.0)
+  address        text         null  (required by the API since SPEC-0002 v1.1.0)
   role           varchar(16)  not null default 'user'
   status         varchar(32)  not null default 'active'
   created_at     timestamptz  not null
@@ -127,7 +138,9 @@ user
   "full_name": "string, 3–120, trimmed",
   "email": "string, RFC 5322, ≤ 320, normalized",
   "password": "string, 10–128",
-  "phone": "string, optional, 7–20 digits/+/-"
+  "national_id": "string, exactly 10 digits after normalization",
+  "phone": "string, Iranian mobile, normalized to 09xxxxxxxxx",
+  "address": "string, 5–500, whitespace collapsed"
 }
 ```
 
@@ -142,7 +155,9 @@ user
     "id": "uuid",
     "email": "ali@example.com",
     "full_name": "علی رضایی",
-    "phone": "+989121234567",
+    "national_id": "0012345679",
+    "phone": "09121234567",
+    "address": "تهران، خیابان آزادی، پلاک ۱۲",
     "role": "user",
     "status": "active",
     "created_at": "2026-11-19T09:12:00Z"
@@ -155,6 +170,7 @@ user
 | Code | HTTP | When |
 |------|------|------|
 | `email_already_registered` | 409 | Normalized email already exists |
+| `national_id_already_registered` | 409 | Normalized national ID already exists |
 | `validation_error` | 422 | Schema or password-policy failure |
 | `internal_error` | 500 | Unexpected failure (no details leaked) |
 
@@ -166,7 +182,8 @@ security-sensitive identity.
 
 - **Screens/routes:** `/register` → `RegisterView` → account creation, with a link to `/login`.
 - **States:** idle; submitting (button shows a spinner and is disabled); field errors; form-level error (`409` renders next to the email field with a "sign in instead" link); success (redirect to `/dashboard`).
-- **Validation:** client mirrors the server (name ≥ 3, valid email, password ≥ 10, confirm password equal, terms accepted). Server `422` is mapped back to fields by `loc`.
+- **Form fields:** name, national ID, mobile number, email, home address, password, password confirmation, terms. National ID and mobile accept Persian digits.
+- **Validation:** client mirrors the server (name ≥ 3, valid email, 10-digit national ID, `09…` mobile, address ≥ 5, password ≥ 10, confirm password equal, terms accepted). Server `422` is mapped back to fields by `loc`.
 - **RTL & i18n:** all strings in `fa-IR`/`en-US`; labels above inputs; password visibility toggle with an accessible name.
 - **Accessibility:** each input has a `<label for>`, `aria-invalid`, `aria-describedby` pointing at the error; the form-level alert uses `role="alert"`; focus moves to the first invalid field on submit.
 - **Dates:** none displayed.
@@ -181,6 +198,8 @@ security-sensitive identity.
 | E4 | Client sends `role`/`status` | `422` — the schema forbids unknown fields; role is always `user` |
 | E5 | Unicode name | Accepted and stored as-is; length counted in code points |
 | E6 | Duplicate phone | Allowed in this slice; phone is not an identifier |
+| E7 | Duplicate national ID | `409 national_id_already_registered`; the email and national-ID checks both run before the insert |
+| E8 | National ID or mobile typed with Persian digits, spaces or dashes | Normalized before validation and storage |
 
 ## 11. Non-Functional Requirements
 
@@ -206,3 +225,4 @@ security-sensitive identity.
 | Date | Change | By | Re-approved |
 |------|--------|----|-------------|
 | 2026-11-19 | Initial approved specification | Architect | — |
+| 2026-11-25 | v1.1.0 — registration now requires the national ID, mobile number and home address; national ID is unique and both identity fields are normalized (FR-10…FR-12, AC-6) | Architect | — |

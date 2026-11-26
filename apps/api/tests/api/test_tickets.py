@@ -7,6 +7,7 @@ from uuid import UUID, uuid4
 
 from sqlalchemy import select
 
+from helpers import registration_body
 from sara_api.modules.tickets.models import Ticket, TicketMessage
 from sara_api.modules.users.models import User
 
@@ -18,8 +19,7 @@ MANAGER = "manager@example.com"
 
 async def _register(client, email: str, full_name: str) -> str:  # type: ignore[no-untyped-def]
     response = await client.post(
-        "/api/v1/auth/register",
-        json={"full_name": full_name, "email": email, "password": PASSWORD},
+        "/api/v1/auth/register", json=registration_body(email, full_name, PASSWORD)
     )
     assert response.status_code == 201, response.text
     return response.json()["access_token"]

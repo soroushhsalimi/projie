@@ -5,6 +5,7 @@ No I/O, no framework imports (AGENTS.md §5.2).
 
 from __future__ import annotations
 
+import re
 from enum import StrEnum
 
 
@@ -56,6 +57,32 @@ COMMON_PASSWORDS = frozenset(
 def normalize_email(email: str) -> str:
     """Trim and case-fold an email so uniqueness is case-insensitive."""
     return email.strip().casefold()
+
+
+#: Persian and Arabic-Indic digits, mapped to ASCII so a resident may type either.
+_DIGITS = str.maketrans("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩", "01234567890123456789")
+
+_MOBILE = re.compile(r"^09\d{9}$")
+
+
+def normalize_national_id(value: str) -> str:
+    """Return the bare 10-digit national ID or raise ``ValueError`` (SPEC-0002 FR-10)."""
+    digits = value.translate(_DIGITS).strip().replace(" ", "").replace("-", "")
+    if len(digits) != 10 or not digits.isdigit():
+        raise ValueError("National ID must be exactly 10 digits.")
+    return digits
+
+
+def normalize_mobile(value: str) -> str:
+    """Canonicalize an Iranian mobile number to ``09xxxxxxxxx`` (SPEC-0002 FR-11)."""
+    digits = value.translate(_DIGITS).strip().replace(" ", "").replace("-", "")
+    if digits.startswith("+98"):
+        digits = f"0{digits[3:]}"
+    elif digits.startswith("0098"):
+        digits = f"0{digits[4:]}"
+    if not _MOBILE.fullmatch(digits):
+        raise ValueError("Mobile number must be a valid Iranian number (09xxxxxxxxx).")
+    return digits
 
 
 def validate_password(password: str, email: str) -> None:

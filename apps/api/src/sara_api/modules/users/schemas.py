@@ -20,7 +20,9 @@ class UserRead(BaseModel):
     id: UUID
     email: EmailStr
     full_name: str
+    national_id: str | None = None
     phone: str | None = None
+    address: str | None = None
     role: Role
     status: UserStatus
     created_at: datetime

@@ -34,6 +34,12 @@ class EmailAlreadyRegistered(AppError):
     title = "Email already registered"
 
 
+class NationalIdAlreadyRegistered(AppError):
+    code = "national_id_already_registered"
+    status = HTTPStatus.CONFLICT
+    title = "National ID already registered"
+
+
 class InvalidCredentials(AppError):
     code = "invalid_credentials"
     status = HTTPStatus.UNAUTHORIZED

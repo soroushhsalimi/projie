@@ -9,7 +9,7 @@ from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from sara_api.core.errors import EmailAlreadyRegistered
+from sara_api.core.errors import EmailAlreadyRegistered, NationalIdAlreadyRegistered
 from sara_api.modules.users.models import RefreshToken, User
 
 
@@ -24,12 +24,23 @@ class UserRepository:
     async def get_by_id(self, user_id: UUID) -> User | None:
         return await self._session.get(User, user_id)
 
+    async def get_by_national_id(self, national_id: str) -> User | None:
+        result = await self._session.execute(
+            select(User).where(User.national_id == national_id)
+        )
+        return result.scalar_one_or_none()
+
     async def add(self, user: User) -> User:
         self._session.add(user)
         try:
             await self._session.flush()
         except IntegrityError as exc:
             await self._session.rollback()
+            # Both unique constraints can trip here; the driver message names the column.
+            if "national_id" in str(exc.orig):
+                raise NationalIdAlreadyRegistered(
+                    "An account with this national ID already exists."
+                ) from exc
             raise EmailAlreadyRegistered("An account with this email already exists.") from exc
         return user
 

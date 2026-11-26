@@ -47,5 +47,7 @@ def registration_payload() -> dict[str, str]:
         "full_name": "علی رضایی",
         "email": "ali@example.com",
         "password": "CorrectHorseBatteryStaple",
+        "national_id": "0012345679",
         "phone": "+989121234567",
+        "address": "تهران، خیابان آزادی، پلاک ۱۲",
     }

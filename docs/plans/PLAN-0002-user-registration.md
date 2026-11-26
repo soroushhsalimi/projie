@@ -132,3 +132,4 @@ missing name, 129-character password, concurrent duplicate insert.
 | 2026-11-19 | T4 | done | 201 + cookie + problem codes |
 | 2026-11-19 | T5 | done | register form renders and validates |
 | 2026-11-19 | T6 | done | browser journey verified |
+| 2026-11-25 | T7 | done | SPEC-0002 v1.1.0: required national ID, mobile and address. Domain normalizers unit-tested; contract covers missing/invalid/duplicate fields; migration `d5c8a1e93f42` is additive and nullable for legacy rows |
