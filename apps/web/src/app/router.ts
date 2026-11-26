@@ -52,6 +52,16 @@ export const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/guests',
+    name: 'guests',
+    component: () => import('@/modules/guests/views/GuestsView.vue'),
+    meta: {
+      requiresAuth: true,
+      roles: ['manager', 'admin'],
+      title: 'مدیریت مهمان',
+    },
+  },
+  {
     path: '/requests',
     name: 'requests',
     component: () => import('@/modules/requests/views/RequestsView.vue'),

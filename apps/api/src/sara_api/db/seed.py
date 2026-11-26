@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import func, select
 
@@ -11,6 +12,7 @@ from sara_api.core.security import PasswordHasher
 from sara_api.db.base import Base
 from sara_api.db.session import build_engine, build_session_factory
 from sara_api.modules.complaints.models import Complaint, ComplaintResponse
+from sara_api.modules.guests.models import GuestVisit
 from sara_api.modules.tickets.models import Ticket, TicketMessage
 from sara_api.modules.users.models import User
 
@@ -104,6 +106,15 @@ DEMO_COMPLAINTS = [
 ]
 
 
+# (guest_name, purpose, status, allowed_from, allowed_until, checked_in, checked_out)
+# Offsets are relative to the seed run so the front desk always has a live window.
+DEMO_GUESTS = [
+    ("مریم احمدی", "ملاقات خانوادگی", "expected", -1, 3, None, None),
+    ("حسین نوری", "تعمیر لوازم برقی", "checked_in", -2, 2, -1, None),
+    ("زهرا کاظمی", "تحویل بسته", "checked_out", -8, -4, -7, -3),
+]
+
+
 async def seed() -> list[str]:
     settings = get_settings()
     engine = build_engine(settings)
@@ -184,6 +195,40 @@ async def seed() -> list[str]:
                     )
             created.append("demo complaints")
 
+        guest_count = await session.execute(select(func.count()).select_from(GuestVisit))
+        if guest_count.scalar_one() == 0:
+            users = {
+                user.email: user
+                for user in (await session.execute(select(User))).scalars().all()
+            }
+            host = users["resident@sara.ir"]
+            now = datetime.now(UTC)
+            for (
+                guest_name,
+                purpose,
+                status,
+                from_hours,
+                until_hours,
+                in_hours,
+                out_hours,
+            ) in DEMO_GUESTS:
+                session.add(
+                    GuestVisit(
+                        host_id=host.id,
+                        guest_name=guest_name,
+                        purpose=purpose,
+                        allowed_from=now + timedelta(hours=from_hours),
+                        allowed_until=now + timedelta(hours=until_hours),
+                        status=status,
+                        checked_in_at=(
+                            now + timedelta(hours=in_hours) if in_hours is not None else None
+                        ),
+                        checked_out_at=(
+                            now + timedelta(hours=out_hours) if out_hours is not None else None
+                        ),
+                    )
+                )
+            created.append("demo guest visits")
 
         await session.commit()
 

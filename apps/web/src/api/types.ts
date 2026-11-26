@@ -107,6 +107,36 @@ export interface ComplaintPage {
   meta: { page: number; per_page: number; total: number }
 }
 
+export type GuestStatus = 'expected' | 'checked_in' | 'checked_out'
+
+export interface GuestVisit {
+  id: string
+  guest_name: string
+  host_name: string
+  purpose: string | null
+  status: GuestStatus
+  allowed_from: string
+  allowed_until: string
+  checked_in_at: string | null
+  checked_out_at: string | null
+  overdue: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface GuestVisitPage {
+  items: GuestVisit[]
+  meta: { page: number; per_page: number; total: number }
+}
+
+export interface GuestVisitCreatePayload {
+  guest_name: string
+  host_email: string
+  purpose?: string | null
+  allowed_from: string
+  allowed_until: string
+}
+
 export type RequestStatus = 'submitted' | 'under_review' | 'approved' | 'rejected' | 'withdrawn'
 export type ReviewAction = Extract<RequestStatus, 'under_review' | 'approved' | 'rejected'>
 export type RoomType = 'single' | 'double' | 'triple' | 'quad'

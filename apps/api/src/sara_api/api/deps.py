@@ -14,6 +14,7 @@ from sara_api.core.errors import Forbidden, InvalidToken, OriginNotAllowed
 from sara_api.domain.accounts import Role
 from sara_api.modules.auth.service import AuthService
 from sara_api.modules.complaints.service import ComplaintService
+from sara_api.modules.guests.service import GuestService
 from sara_api.modules.requests.service import RequestService
 from sara_api.modules.tickets.service import TicketService
 from sara_api.modules.users.models import User
@@ -92,6 +93,10 @@ def get_request_service(session: AsyncSession = Depends(get_db)) -> RequestServi
 
 def get_complaint_service(session: AsyncSession = Depends(get_db)) -> ComplaintService:
     return ComplaintService(session)
+
+
+def get_guest_service(session: AsyncSession = Depends(get_db)) -> GuestService:
+    return GuestService(session)
 
 
 async def require_trusted_origin(

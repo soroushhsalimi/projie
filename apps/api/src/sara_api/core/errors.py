@@ -112,6 +112,18 @@ class ComplaintAlreadyAnsweredConflict(AppError):
     title = "This complaint already has an initial response"
 
 
+class GuestCheckInBlockedConflict(AppError):
+    code = "guest_check_in_blocked"
+    status = HTTPStatus.CONFLICT
+    title = "This guest cannot be checked in right now"
+
+
+class GuestCheckOutBlockedConflict(AppError):
+    code = "guest_check_out_blocked"
+    status = HTTPStatus.CONFLICT
+    title = "This guest cannot be checked out"
+
+
 class NotReady(AppError):
     code = "not_ready"
     status = HTTPStatus.SERVICE_UNAVAILABLE
